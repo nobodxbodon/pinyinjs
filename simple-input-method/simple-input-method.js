@@ -13,7 +13,7 @@ var SimpleInputMethod =
 	/**
 	 * 初始化字典配置
 	 */
-	initDict: function()
+	初始化字典: function()
 	{
 		var dict = pinyinUtil.dict;
 		if(!dict.py2hz) throw '未找到合适的字典文件！';
@@ -40,7 +40,7 @@ var SimpleInputMethod =
 	/**
 	 * 初始化DOM结构
 	 */
-	initDom: function()
+	初始化DOM: function()
 	{
 		var temp = '<div class="pinyin"></div><div class="result"><ol></ol><div class="page-up-down"><span class="page-up">▲</span><span class="page-down">▼</span></div></div>';
 		var dom = document.createElement('div');
@@ -52,18 +52,18 @@ var SimpleInputMethod =
 		dom.addEventListener('click', function(e)
 		{
 			var target = e.target;
-			if(target.nodeName == 'LI') that.selectHanzi(parseInt(target.dataset.idx));
+			if(target.nodeName == 'LI') that.按索引选字(parseInt(target.dataset.idx));
 			else if(target.nodeName == 'SPAN')
 			{
 				if(target.className == 'page-up' && that.pageCurrent > 1)
 				{
 					that.pageCurrent--;
-					that.refreshPage();
+					that.刷新当前页();
 				}
 				else if(target.className == 'page-down' && that.pageCurrent < that.pageCount)
 				{
 					that.pageCurrent++;
-					that.refreshPage();
+					that.刷新当前页();
 				}
 			}
 		})
@@ -72,10 +72,10 @@ var SimpleInputMethod =
 	/**
 	 * 初始化
 	 */
-	init: function(selector)
+	初始化: function(selector)
 	{
-		this.initDict();
-		this.initDom();
+		this.初始化字典();
+		this.初始化DOM();
 		obj = document.querySelectorAll(selector);
 		this._target = document.querySelector('#simle_input_method');
 		this._pinyinTarget = document.querySelector('#simle_input_method .pinyin');
@@ -89,34 +89,34 @@ var SimpleInputMethod =
 				var preventDefault = false;
 				if(keyCode >= 65 && keyCode <= 90) // A-Z
 				{
-					that.addChar(String.fromCharCode(keyCode+32), this);
+					that.加英文字符(String.fromCharCode(keyCode+32), this);
 					preventDefault = true;
 				}
 				else if(keyCode == 8 && that.pinyin) // 删除键
 				{
-					that.delChar();
+					that.删英文字符();
 					preventDefault = true;
 				}
 				else if(keyCode >= 48 && keyCode <= 57 && !e.shiftKey && that.pinyin) // 1-9
 				{
-					that.selectHanzi(keyCode-48);
+					that.按索引选字(keyCode-48);
 					preventDefault = true;
 				}
 				else if(keyCode == 32 && that.pinyin) // 空格
 				{
-					that.selectHanzi(1);
+					that.按索引选字(1);
 					preventDefault = true;
 				}
 				else if(keyCode == 33 && that.pageCount > 0 && that.pageCurrent > 1) // 上翻页
 				{
 					that.pageCurrent--;
-					that.refreshPage();
+					that.刷新当前页();
 					preventDefault = true;
 				}
 				else if(keyCode == 34 && that.pageCount > 0 && that.pageCurrent < that.pageCount) // 下翻页
 				{
 					that.pageCurrent++;
-					that.refreshPage();
+					that.刷新当前页();
 					preventDefault = true;
 				}
 				if(preventDefault) e.preventDefault();
@@ -124,14 +124,14 @@ var SimpleInputMethod =
 			obj[i].addEventListener('focus', function()
 			{
 				// 如果选中的不是当前文本框，隐藏输入法
-				if(that._input !== this) that.hide();
+				if(that._input !== this) that.隐藏();
 			});
 		}
 	},
 	/**
 	 * 单个拼音转单个汉字，例如输入 "a" 返回 "阿啊呵腌嗄吖锕"
 	 */
-	getSingleHanzi: function(pinyin)
+	按单个拼音取汉字: function(pinyin)
 	{
 		return pinyinUtil.dict.py2hz2[pinyin] || pinyinUtil.dict.py2hz[pinyin] || '';
 	},
@@ -140,15 +140,15 @@ var SimpleInputMethod =
 	 * @param pinyin 需要转换的拼音，如 zhongguo
 	 * @return 返回一个数组，格式类似：[["中","重","种","众","终","钟","忠"], "zhong'guo"]
 	 */
-	getHanzi: function(pinyin)
+	拼音转汉字: function(pinyin)
 	{
-		var result = this.getSingleHanzi(pinyin);
+		var result = this.按单个拼音取汉字(pinyin);
 		if(result) return [result.split(''), pinyin];
 		var temp = '';
 		for(var i=0, len = pinyin.length; i<len; i++)
 		{
 			temp += pinyin[i];
-			result = this.getSingleHanzi(temp);
+			result = this.按单个拼音取汉字(temp);
 			if(!result) continue;
 			// flag表示如果当前能匹配到结果、并且往后5个字母不能匹配结果，因为最长可能是5个字母，如 zhuang
 			var flag = false;
@@ -156,7 +156,7 @@ var SimpleInputMethod =
 			{
 				for(var j=1, len = pinyin.length; j<=5 && (i+j)<len; j++)
 				{
-					if(this.getSingleHanzi(pinyin.substr(0, i+j+1)))
+					if(this.按单个拼音取汉字(pinyin.substr(0, i+j+1)))
 					{
 						flag = true;
 						break;
@@ -170,7 +170,7 @@ var SimpleInputMethod =
 	/**
 	 * 选择某个汉字，i有效值为1-5
 	 */
-	selectHanzi: function(i)
+	按索引选字: function(i)
 	{
 		var hz = this.result[(this.pageCurrent - 1) * this.pageSize + i - 1];
 		if(!hz) return;
@@ -179,29 +179,29 @@ var SimpleInputMethod =
 		if(idx > 0)
 		{
 			this.pinyin = this.pinyin.substr(idx+1);
-			this.refresh();
+			this.刷新();
 		}
 		else // 如果没有单引号，表示已经没有候选词了
 		{
 			this._input.value += this.hanzi;
-			this.hide();
+			this.隐藏();
 		}
 	},
 	/**
 	 * 将拼音转换成汉字候选词，并显示在界面上
 	 */
-	refresh: function()
+	刷新: function()
 	{
-		var temp = this.getHanzi(this.pinyin.replace(/'/g, ''));
+		var temp = this.拼音转汉字(this.pinyin.replace(/'/g, ''));
 		this.result = temp[0];
 		this.pinyin = temp[1];
 		var count = this.result.length;
 		this.pageCurrent = 1;
 		this.pageCount = Math.ceil(count / this.pageSize);
 		this._pinyinTarget.innerHTML = this.hanzi + this.pinyin;
-		this.refreshPage();
+		this.刷新当前页();
 	},
-	refreshPage: function()
+	刷新当前页: function()
 	{
 		var temp = this.result.slice((this.pageCurrent-1)*this.pageSize, this.pageCurrent*this.pageSize);
 		var html = '';
@@ -214,26 +214,26 @@ var SimpleInputMethod =
 		this._target.querySelector('.page-down').style.opacity = this.pageCurrent < this.pageCount ? '1' : '.3';
 		this._resultTarget.innerHTML = html;
 	},
-	addChar: function(ch, obj)
+	加英文字符: function(ch, obj)
 	{
 		if(this.pinyin.length == 0) // 长度为1，显示输入法
 		{
-			this.show(obj);
+			this.显示(obj);
 		}
 		this.pinyin += ch;
-		this.refresh();
+		this.刷新();
 	},
-	delChar: function()
+	删英文字符: function()
 	{
 		if(this.pinyin.length <= 1)
 		{
-			this.hide();
+			this.隐藏();
 			return;
 		}
 		this.pinyin = this.pinyin.substr(0, this.pinyin.length-1);
-		this.refresh();
+		this.刷新();
 	},
-	show: function(obj)
+	显示: function(obj)
 	{
 		var pos = obj.getBoundingClientRect();
 		this._target.style.left = pos.left + 'px';
@@ -241,12 +241,12 @@ var SimpleInputMethod =
 		this._input = obj;
 		this._target.style.display = 'block';
 	},
-	hide: function()
+	隐藏: function()
 	{
-		this.reset();
+		this.重置();
 		this._target.style.display = 'none';
 	},
-	reset: function()
+	重置: function()
 	{
 		this.hanzi = '';
 		this.pinyin = '';
