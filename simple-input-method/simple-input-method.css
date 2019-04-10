@@ -1,4 +1,4 @@
-﻿.simple-input-method {
+﻿.简易输入法 {
     position: absolute;
     background: #FFF;
     border: solid 1px #B5C5D2;
@@ -6,34 +6,34 @@
     color: #0364CD;
     display: none;
 }
-.simple-input-method .pinyin {
+.简易输入法 .拼音 {
     border-bottom: solid 1px #B5C5D2;
     padding: 4px 10px;
     font-weight: bold;
 }
-.simple-input-method .result {
+.简易输入法 .选中 {
     padding: 4px 10px 4px 0px;
 }
-.simple-input-method .result ol {
+.简易输入法 .选中 ol {
     margin: 0;
     padding: 0;
     display: inline-block;
     vertical-align: middle;
 }
-.simple-input-method .result ol:after {
+.简易输入法 .选中 ol:after {
     content: '';
     display: block;
     clear: left;
 }
-.simple-input-method .result ol li {
+.简易输入法 .选中 ol li {
     float: left;
     margin-left: 30px;
     cursor: pointer;
 }
-.simple-input-method .result ol li:first-child {
+.简易输入法 .选中 ol li:first-child {
     color: red;
 }
-.simple-input-method .page-up-down {
+.简易输入法 .翻页 {
     display: inline-block;
     border: solid 1px #BADBFF;
     font-size: 12px;
@@ -41,12 +41,12 @@
     border-radius: 1px;
     margin-left: 10px;
 }
-.simple-input-method .page-up-down .page-down{
+.简易输入法 .翻页 .下页{
     border-left: solid 1px #BADBFF;
 }
-.simple-input-method .page-up-down span {
+.简易输入法 .翻页 span {
     cursor: pointer;
 }
-.simple-input-method .page-up-down span.disable {
+.简易输入法 .翻页 span.disable {
     opacity: .3;
 }

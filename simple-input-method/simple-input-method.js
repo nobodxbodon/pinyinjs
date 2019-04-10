@@ -2,7 +2,7 @@
  * 简单的JS版输入法，拿来玩玩还而已，没有多大实际使用意义
  * simple-input-method.js
  */
-var SimpleInputMethod =
+var 简易输入法 =
 {
 	候选汉字: '',
 	候选拼音: '',
@@ -31,36 +31,35 @@ var SimpleInputMethod =
 		}
 	},
 	初始化DOM: function () {
-		var temp = '<div class="pinyin"></div><div class="result"><ol></ol><div class="page-up-down"><span class="page-up">▲</span><span class="page-down">▼</span></div></div>';
-		var dom = document.createElement('div');
-		dom.id = 'simle_input_method';
-		dom.className = 'simple-input-method';
-		dom.innerHTML = temp;
+		var 弹窗 = document.createElement('div');
+		弹窗.id = '简易输入法';
+		弹窗.className = '简易输入法';
+		弹窗.innerHTML = '<div class="拼音"></div><div class="选中"><ol></ol><div class="翻页"><span class="上页">▲</span><span class="下页">▼</span></div></div>';
 		var that = this;
 		// 初始化汉字选择和翻页键的点击事件
-		dom.addEventListener('click', function (e) {
+		弹窗.addEventListener('click', function (e) {
 			var 事件目标 = e.target;
 			if (事件目标.nodeName == 'LI') that.按索引选字(parseInt(事件目标.dataset.idx));
 			else if (事件目标.nodeName == 'SPAN') {
-				if (事件目标.className == 'page-up' && that.当前页 > 1) {
+				if (事件目标.className == '上页' && that.当前页 > 1) {
 					that.当前页--;
 					that.刷新当前页();
 				}
-				else if (事件目标.className == 'page-down' && that.当前页 < that.总页数) {
+				else if (事件目标.className == '下页' && that.当前页 < that.总页数) {
 					that.当前页++;
 					that.刷新当前页();
 				}
 			}
 		})
-		document.body.appendChild(dom);
+		document.body.appendChild(弹窗);
 	},
 	初始化: function (selector) {
 		this.初始化字典();
 		this.初始化DOM();
 		obj = document.querySelectorAll(selector);
-		this._target = document.querySelector('#simle_input_method');
-		this._pinyinTarget = document.querySelector('#simle_input_method .pinyin');
-		this._resultTarget = document.querySelector('#simle_input_method .result ol');
+		this._target = document.querySelector('#简易输入法');
+		this._pinyinTarget = document.querySelector('#简易输入法 .拼音');
+		this._resultTarget = document.querySelector('#简易输入法 .选中 ol');
 		var that = this;
 		for (var i = 0; i < obj.length; i++) {
 			obj[i].addEventListener('keydown', function (e) {
@@ -177,8 +176,8 @@ var SimpleInputMethod =
 		temp.forEach(function (val) {
 			html += '<li data-idx="' + (++i) + '">' + val + '</li>';
 		});
-		this._target.querySelector('.page-up').style.opacity = this.当前页 > 1 ? '1' : '.3';
-		this._target.querySelector('.page-down').style.opacity = this.当前页 < this.总页数 ? '1' : '.3';
+		this._target.querySelector('.上页').style.opacity = this.当前页 > 1 ? '1' : '.3';
+		this._target.querySelector('.下页').style.opacity = this.当前页 < this.总页数 ? '1' : '.3';
 		this._resultTarget.innerHTML = html;
 	},
 	加英文字符: function (ch, obj) {
