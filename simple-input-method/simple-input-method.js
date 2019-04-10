@@ -34,7 +34,9 @@ var 简易输入法 =
 		var 弹窗 = document.createElement('div');
 		弹窗.id = '简易输入法';
 		弹窗.className = '简易输入法';
-		弹窗.innerHTML = '<div class="拼音"></div><div class="选中"><ol></ol><div class="翻页"><span class="上页">▲</span><span class="下页">▼</span></div></div>';
+		弹窗.innerHTML = '<div class="拼音"></div>'
+			+ '<div class="选中"><ol></ol>'
+			+ '<div class="翻页"><span class="上页">▲</span><span class="下页">▼</span></div></div>';
 		var that = this;
 		// 初始化汉字选择和翻页键的点击事件
 		弹窗.addEventListener('click', function (e) {
@@ -57,9 +59,9 @@ var 简易输入法 =
 		this.初始化字典();
 		this.初始化DOM();
 		obj = document.querySelectorAll(selector);
-		this._target = document.querySelector('#简易输入法');
-		this._pinyinTarget = document.querySelector('#简易输入法 .拼音');
-		this._resultTarget = document.querySelector('#简易输入法 .选中 ol');
+		this._弹窗 = document.querySelector('#简易输入法');
+		this._弹窗拼音部分 = document.querySelector('#简易输入法 .拼音');
+		this._弹窗选字部分 = document.querySelector('#简易输入法 .选中 ol');
 		var that = this;
 		for (var i = 0; i < obj.length; i++) {
 			obj[i].addEventListener('keydown', function (e) {
@@ -101,7 +103,7 @@ var 简易输入法 =
 			});
 			obj[i].addEventListener('focus', function () {
 				// 如果选中的不是当前文本框，隐藏输入法
-				if (that._input !== this) that.隐藏();
+				if (that._输入元素 !== this) that.隐藏();
 			});
 		}
 	},
@@ -117,13 +119,13 @@ var 简易输入法 =
 	 * @return 返回一个数组，格式类似：[["中","重","种","众","终","钟","忠"], "zhong'guo"]
 	 */
 	拼音转汉字: function (拼音) {
-		var result = this.按单个拼音取汉字(拼音);
-		if (result) return [result.split(''), 拼音];
+		var 待选字 = this.按单个拼音取汉字(拼音);
+		if (待选字) return [待选字.split(''), 拼音];
 		var temp = '';
 		for (var i = 0, len = 拼音.length; i < len; i++) {
 			temp += 拼音[i];
-			result = this.按单个拼音取汉字(temp);
-			if (!result) continue;
+			待选字 = this.按单个拼音取汉字(temp);
+			if (!待选字) continue;
 			// flag表示如果当前能匹配到结果、并且往后5个字母不能匹配结果，因为最长可能是5个字母，如 zhuang
 			var flag = false;
 			if ((i + 1) < 拼音.length) {
@@ -134,7 +136,7 @@ var 简易输入法 =
 					}
 				}
 			}
-			if (!flag) return [result.split(''), 拼音.substr(0, i + 1) + "'" + 拼音.substr(i + 1)];
+			if (!flag) return [待选字.split(''), 拼音.substr(0, i + 1) + "'" + 拼音.substr(i + 1)];
 		}
 		return [[], '']; // 理论上一般不会出现这种情况
 	},
@@ -145,14 +147,14 @@ var 简易输入法 =
 		var 选中字 = this.匹配汉字[(this.当前页 - 1) * this.每页大小 + i - 1];
 		if (!选中字) return;
 		this.候选汉字 += 选中字;
-		var idx = this.候选拼音.indexOf("'");
-		if (idx > 0) {
-			this.候选拼音 = this.候选拼音.substr(idx + 1);
+		var 分隔位置 = this.候选拼音.indexOf("'");
+		if (分隔位置 > 0) {
+			this.候选拼音 = this.候选拼音.substr(分隔位置 + 1);
 			this.刷新();
 		}
 		else // 如果没有单引号，表示已经没有候选词了
 		{
-			this._input.value += this.候选汉字;
+			this._输入元素.value += this.候选汉字;
 			this.隐藏();
 		}
 	},
@@ -166,7 +168,7 @@ var 简易输入法 =
 		var count = this.匹配汉字.length;
 		this.当前页 = 1;
 		this.总页数 = Math.ceil(count / this.每页大小);
-		this._pinyinTarget.innerHTML = this.候选汉字 + this.候选拼音;
+		this._弹窗拼音部分.innerHTML = this.候选汉字 + this.候选拼音;
 		this.刷新当前页();
 	},
 	刷新当前页: function () {
@@ -176,16 +178,16 @@ var 简易输入法 =
 		temp.forEach(function (val) {
 			html += '<li data-idx="' + (++i) + '">' + val + '</li>';
 		});
-		this._target.querySelector('.上页').style.opacity = this.当前页 > 1 ? '1' : '.3';
-		this._target.querySelector('.下页').style.opacity = this.当前页 < this.总页数 ? '1' : '.3';
-		this._resultTarget.innerHTML = html;
+		this._弹窗.querySelector('.上页').style.opacity = this.当前页 > 1 ? '1' : '.3';
+		this._弹窗.querySelector('.下页').style.opacity = this.当前页 < this.总页数 ? '1' : '.3';
+		this._弹窗选字部分.innerHTML = html;
 	},
-	加英文字符: function (ch, obj) {
+	加英文字符: function (字符, obj) {
 		if (this.候选拼音.length == 0) // 长度为1，显示输入法
 		{
 			this.显示(obj);
 		}
-		this.候选拼音 += ch;
+		this.候选拼音 += 字符;
 		this.刷新();
 	},
 	删英文字符: function () {
@@ -198,14 +200,14 @@ var 简易输入法 =
 	},
 	显示: function (obj) {
 		var pos = obj.getBoundingClientRect();
-		this._target.style.left = pos.left + 'px';
-		this._target.style.top = pos.top + pos.height + document.body.scrollTop + 'px';
-		this._input = obj;
-		this._target.style.display = 'block';
+		this._弹窗.style.left = pos.left + 'px';
+		this._弹窗.style.top = pos.top + pos.height + document.body.scrollTop + 'px';
+		this._输入元素 = obj;
+		this._弹窗.style.display = 'block';
 	},
 	隐藏: function () {
 		this.重置();
-		this._target.style.display = 'none';
+		this._弹窗.style.display = 'none';
 	},
 	重置: function () {
 		this.候选汉字 = '';
@@ -213,6 +215,6 @@ var 简易输入法 =
 		this.匹配汉字 = [];
 		this.当前页 = 1;
 		this.总页数 = 0;
-		this._pinyinTarget.innerHTML = '';
+		this._弹窗拼音部分.innerHTML = '';
 	}
 };
