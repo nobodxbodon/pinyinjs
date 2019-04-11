@@ -55,16 +55,16 @@ var 简易输入法 =
 		})
 		document.body.appendChild(弹窗);
 	},
-	初始化: function (selector) {
+	初始化: function (选择器) {
 		this.初始化字典();
 		this.初始化DOM();
-		obj = document.querySelectorAll(selector);
+		输入元素 = document.querySelectorAll(选择器);
 		this._弹窗 = document.querySelector('#简易输入法');
 		this._弹窗拼音部分 = document.querySelector('#简易输入法 .拼音');
 		this._弹窗选字部分 = document.querySelector('#简易输入法 .选中 ol');
 		var that = this;
-		for (var i = 0; i < obj.length; i++) {
-			obj[i].addEventListener('keydown', function (e) {
+		for (var i = 0; i < 输入元素.length; i++) {
+			输入元素[i].addEventListener('keydown', function (e) {
 				var 键码 = e.keyCode;
 				var 避免默认处理 = false;
 				if (键码 >= 65 && 键码 <= 90) // A-Z
@@ -101,7 +101,7 @@ var 简易输入法 =
 				}
 				if (避免默认处理) e.preventDefault();
 			});
-			obj[i].addEventListener('focus', function () {
+			输入元素[i].addEventListener('focus', function () {
 				// 如果选中的不是当前文本框，隐藏输入法
 				if (that._输入元素 !== this) that.隐藏();
 			});
@@ -121,10 +121,10 @@ var 简易输入法 =
 	拼音转汉字: function (拼音) {
 		var 待选字 = this.按单个拼音取汉字(拼音);
 		if (待选字) return [待选字.split(''), 拼音];
-		var temp = '';
+		var 前部 = '';
 		for (var i = 0, len = 拼音.length; i < len; i++) {
-			temp += 拼音[i];
-			待选字 = this.按单个拼音取汉字(temp);
+			前部 += 拼音[i];
+			待选字 = this.按单个拼音取汉字(前部);
 			if (!待选字) continue;
 			// flag表示如果当前能匹配到结果、并且往后5个字母不能匹配结果，因为最长可能是5个字母，如 zhuang
 			var flag = false;
@@ -182,10 +182,10 @@ var 简易输入法 =
 		this._弹窗.querySelector('.下页').style.opacity = this.当前页 < this.总页数 ? '1' : '.3';
 		this._弹窗选字部分.innerHTML = html;
 	},
-	加英文字符: function (字符, obj) {
+	加英文字符: function (字符, 输入元素) {
 		if (this.候选拼音.length == 0) // 长度为1，显示输入法
 		{
-			this.显示(obj);
+			this.显示(输入元素);
 		}
 		this.候选拼音 += 字符;
 		this.刷新();
@@ -198,11 +198,11 @@ var 简易输入法 =
 		this.候选拼音 = this.候选拼音.substr(0, this.候选拼音.length - 1);
 		this.刷新();
 	},
-	显示: function (obj) {
-		var pos = obj.getBoundingClientRect();
-		this._弹窗.style.left = pos.left + 'px';
-		this._弹窗.style.top = pos.top + pos.height + document.body.scrollTop + 'px';
-		this._输入元素 = obj;
+	显示: function (输入元素) {
+		var 位置 = 输入元素.getBoundingClientRect();
+		this._弹窗.style.left = 位置.left + 'px';
+		this._弹窗.style.top = 位置.top + 位置.height + document.body.scrollTop + 'px';
+		this._输入元素 = 输入元素;
 		this._弹窗.style.display = 'block';
 	},
 	隐藏: function () {
